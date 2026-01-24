@@ -164,6 +164,49 @@
       border-radius: 10px;
     }
 
+    .remove-btn {
+      background: rgba(233, 69, 96, 0.2);
+      border: none;
+      color: #e94560;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      transition: background 0.2s;
+      margin-left: 8px;
+    }
+
+    .remove-btn:hover {
+      background: rgba(233, 69, 96, 0.4);
+    }
+
+    .add-site-section {
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+
+    .add-site-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .add-site-btn:hover {
+      opacity: 0.9;
+    }
+
+    .add-site-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .footer {
       margin-top: 15px;
       text-align: center;
@@ -205,61 +248,11 @@
   </div>
 
   <div class="sites-header">Blocked Sites</div>
-  <div class="sites-list">
-    <div class="site-item">
-      <span class="site-icon">📘</span>
-      <span class="site-name">Facebook</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">🐦</span>
-      <span class="site-name">Twitter / X</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">📷</span>
-      <span class="site-name">Instagram</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">🎵</span>
-      <span class="site-name">TikTok</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">🤖</span>
-      <span class="site-name">Reddit</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">▶️</span>
-      <span class="site-name">YouTube</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">👻</span>
-      <span class="site-name">Snapchat</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">💼</span>
-      <span class="site-name">LinkedIn</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">📌</span>
-      <span class="site-name">Pinterest</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
-    <div class="site-item">
-      <span class="site-icon">💬</span>
-      <span class="site-name">Discord</span>
-      <span class="blocked-badge">Blocked</span>
-    </div>
+  <div class="sites-list" id="sitesList">
+    <!-- Sites will be dynamically loaded here -->
   </div>
-
-  <div class="footer">
-    Focus mode enabled • Stay strong 💪
+  <div class="add-site-section">
+    <button class="add-site-btn" id="addCurrentSiteBtn">Add Current Site</button>
   </div>
 
   <script src="popup.js"></script>

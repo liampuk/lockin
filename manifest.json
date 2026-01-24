@@ -7,7 +7,8 @@
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
     "browsingData",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "background": {
     "service_worker": "background.js"
@@ -22,30 +23,7 @@
     }
   },
   "host_permissions": [
-    "*://facebook.com/*",
-    "*://*.facebook.com/*",
-    "*://twitter.com/*",
-    "*://*.twitter.com/*",
-    "*://x.com/*",
-    "*://*.x.com/*",
-    "*://instagram.com/*",
-    "*://*.instagram.com/*",
-    "*://tiktok.com/*",
-    "*://*.tiktok.com/*",
-    "*://reddit.com/*",
-    "*://*.reddit.com/*",
-    "*://youtube.com/*",
-    "*://*.youtube.com/*",
-    "*://snapchat.com/*",
-    "*://*.snapchat.com/*",
-    "*://linkedin.com/*",
-    "*://*.linkedin.com/*",
-    "*://pinterest.com/*",
-    "*://*.pinterest.com/*",
-    "*://tumblr.com/*",
-    "*://*.tumblr.com/*",
-    "*://discord.com/*",
-    "*://*.discord.com/*"
+    "*://*/*"
   ],
   "declarative_net_request": {
     "rule_resources": [
