@@ -1,10 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "LockedIn - Social Media Blocker",
+  "name": "LockIn - Social Media Blocker",
   "version": "1.0.0",
   "description": "Block social media sites to stay focused and productive",
   "permissions": [
     "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "browsingData",
     "storage"
   ],
   "background": {
@@ -20,17 +22,29 @@
     }
   },
   "host_permissions": [
+    "*://facebook.com/*",
     "*://*.facebook.com/*",
+    "*://twitter.com/*",
     "*://*.twitter.com/*",
+    "*://x.com/*",
     "*://*.x.com/*",
+    "*://instagram.com/*",
     "*://*.instagram.com/*",
+    "*://tiktok.com/*",
     "*://*.tiktok.com/*",
+    "*://reddit.com/*",
     "*://*.reddit.com/*",
+    "*://youtube.com/*",
     "*://*.youtube.com/*",
+    "*://snapchat.com/*",
     "*://*.snapchat.com/*",
+    "*://linkedin.com/*",
     "*://*.linkedin.com/*",
+    "*://pinterest.com/*",
     "*://*.pinterest.com/*",
+    "*://tumblr.com/*",
     "*://*.tumblr.com/*",
+    "*://discord.com/*",
     "*://*.discord.com/*"
   ],
   "declarative_net_request": {
@@ -45,14 +59,14 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "16": "icons/locked16.png",
+      "48": "icons/locked48.png",
+      "128": "icons/locked128.png"
     }
   },
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "icons/locked16.png",
+    "48": "icons/locked48.png",
+    "128": "icons/locked128.png"
   }
 }

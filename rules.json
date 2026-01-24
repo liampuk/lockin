@@ -37,7 +37,7 @@
       }
     },
     "condition": {
-      "urlFilter": "||x.com",
+      "regexFilter": "^https?://([^/]*\\.)?x\\.com",
       "resourceTypes": ["main_frame"]
     }
   },

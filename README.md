@@ -1,4 +1,4 @@
-# LockedIn - Social Media Blocker
+# LockIn - Social Media Blocker
 
 A simple Chrome extension that blocks social media sites to help you stay focused and productive.
 
@@ -36,13 +36,13 @@ Before loading the extension, you need to generate the icon files:
 1. Open Chrome and navigate to `chrome://extensions/`
 2. Enable **Developer mode** (toggle in the top right corner)
 3. Click **Load unpacked**
-4. Select the `lockedin` folder (this folder)
+4. Select the `lockin` folder (this folder)
 5. The extension should now appear in your extensions list
 
 ### 3. Pin the Extension (Optional)
 
 1. Click the puzzle piece icon in Chrome's toolbar
-2. Find "LockedIn - Social Media Blocker"
+2. Find "LockIn - Social Media Blocker"
 3. Click the pin icon to keep it visible in your toolbar
 
 ## Usage
