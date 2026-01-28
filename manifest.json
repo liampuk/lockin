@@ -8,7 +8,8 @@
     "declarativeNetRequestWithHostAccess",
     "browsingData",
     "storage",
-    "tabs"
+    "tabs",
+    "webNavigation"
   ],
   "background": {
     "service_worker": "background.js"
@@ -17,7 +18,7 @@
     "toggle-blocking": {
       "suggested_key": {
         "default": "Ctrl+Shift+L",
-        "mac": "Command+Shift+L"
+        "mac": "MacCtrl+Shift+L"
       },
       "description": "Toggle social media blocking on/off"
     }
