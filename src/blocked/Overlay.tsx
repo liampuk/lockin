@@ -140,7 +140,7 @@ export const Overlay = ({ isLocked }: OverlayProps) => {
                 color: isLocked ? "#ccc" : "#555",
               }}
             >
-              <p className="">Time spent locked in today: 00:00:00</p>
+              <p className="">liamp.uk</p>
             </div>
           </div>
         </div>

@@ -179,6 +179,9 @@ export function LockBox({ onLockEngage, onLockDisengage, ...props }: LockBoxProp
     if (tl.progress() > 0) {
       // Currently locked - reverse to unlock
       tl.reverse()
+      setTimeout(() => {
+        tl.play()
+      }, 350)
     } else {
       // Currently unlocked - play to lock
       tl.play()
