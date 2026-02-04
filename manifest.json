@@ -3,6 +3,9 @@
   "name": "LockIn - Social Media Blocker",
   "version": "1.0.0",
   "description": "Block social media sites to stay focused and productive",
+  "sandbox": {
+    "pages": ["src/blocked/index.html"]
+  },
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
