@@ -12,7 +12,8 @@
     "webNavigation"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background/index.ts",
+    "type": "module"
   },
   "commands": {
     "enable-blocking": {
@@ -43,7 +44,7 @@
     ]
   },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/popup/index.html",
     "default_icon": {
       "16": "icons/locked16.png",
       "48": "icons/locked48.png",
@@ -54,5 +55,15 @@
     "16": "icons/locked16.png",
     "48": "icons/locked48.png",
     "128": "icons/locked128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/unlocked16.png",
+        "icons/unlocked48.png",
+        "icons/unlocked128.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

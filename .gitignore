@@ -1,8 +1,21 @@
-*~
-*.DS_store
+# Dependencies
 node_modules
-# Temporary directory for debugging extension samples
+
+# Build output
+dist
+
+# Editor/OS
+*~
+*.DS_Store
+**/*.swp
+
+# Vite
+*.local
+
+# Extension debug
 _debug
 _metadata
-dist
-**/*.swp 
+
+# Logs
+*.log
+npm-debug.log*
