@@ -159,10 +159,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   return true; // Keep the message channel open for async response
 });
 
-// Listen for the keyboard shortcut command
+// Listen for keyboard shortcut commands
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command === 'toggle-blocking') {
-    await toggleBlocking();
+  if (command === 'enable-blocking') {
+    await enableBlocking();
+  } else if (command === 'disable-blocking') {
+    await disableBlocking();
   }
 });
 
@@ -183,59 +185,76 @@ async function updateIcon(enabled) {
   await chrome.action.setIcon({ path: iconPath });
 }
 
-async function toggleBlocking() {
-  // Get current state
+async function enableBlocking() {
+  // Check if already enabled
   const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
-  const currentlyEnabled = blockingEnabled !== false; // Default to true
-  const newState = !currentlyEnabled;
+  if (blockingEnabled === true) {
+    return; // Already enabled, do nothing
+  }
   
   // Save new state
-  await chrome.storage.local.set({ blockingEnabled: newState });
+  await chrome.storage.local.set({ blockingEnabled: true });
   
   // Update rules
   const { blockedSites = [] } = await chrome.storage.local.get(['blockedSites']);
   
-  if (newState) {
-    // Re-add dynamic rules
-    await updateDynamicRules(blockedSites);
-    // Static ruleset is disabled, we only use dynamic rules
-    
-    // Clear cache and service workers for sites that aggressively cache
-    // This ensures blocking works immediately after being toggled on
-    const origins = blockedSites.flatMap(domain => [
-      `https://${domain}`,
-      `https://www.${domain}`,
-      `http://${domain}`,
-      `http://www.${domain}`
-    ]);
-    
-    await chrome.browsingData.remove({
-      origins: origins
-    }, {
-      cacheStorage: true,
-      serviceWorkers: true
+  // Re-add dynamic rules
+  await updateDynamicRules(blockedSites);
+  
+  // Clear cache and service workers for sites that aggressively cache
+  // This ensures blocking works immediately after being enabled
+  const origins = blockedSites.flatMap(domain => [
+    `https://${domain}`,
+    `https://www.${domain}`,
+    `http://${domain}`,
+    `http://www.${domain}`
+  ]);
+  
+  await chrome.browsingData.remove({
+    origins: origins
+  }, {
+    cacheStorage: true,
+    serviceWorkers: true
+  });
+
+  // Update icon based on state
+  await updateIcon(true);
+  
+  // Show notification badge on icon
+  await chrome.action.setBadgeText({ text: 'ON' });
+  await chrome.action.setBadgeBackgroundColor({ color: '#7cd67f' });
+  
+  // Clear badge after 2 seconds
+  setTimeout(async () => {
+    await chrome.action.setBadgeText({ text: '' });
+  }, 2000);
+}
+
+async function disableBlocking() {
+  // Check if already disabled
+  const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
+  if (blockingEnabled === false) {
+    return; // Already disabled, do nothing
+  }
+  
+  // Save new state
+  await chrome.storage.local.set({ blockingEnabled: false });
+  
+  // Remove all dynamic rules
+  const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
+  const existingRuleIds = existingRules.map(rule => rule.id);
+  if (existingRuleIds.length > 0) {
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: existingRuleIds
     });
-  } else {
-    // Remove all dynamic rules
-    const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
-    const existingRuleIds = existingRules.map(rule => rule.id);
-    if (existingRuleIds.length > 0) {
-      await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: existingRuleIds
-      });
-    }
   }
 
   // Update icon based on state
-  await updateIcon(newState);
+  await updateIcon(false);
   
   // Show notification badge on icon
-  await chrome.action.setBadgeText({ 
-    text: newState ? 'ON' : 'OFF' 
-  });
-  await chrome.action.setBadgeBackgroundColor({ 
-    color: newState ? '#7cd67f' : '#ddd' 
-  });
+  await chrome.action.setBadgeText({ text: 'OFF' });
+  await chrome.action.setBadgeBackgroundColor({ color: '#ddd' });
   
   // Clear badge after 2 seconds
   setTimeout(async () => {

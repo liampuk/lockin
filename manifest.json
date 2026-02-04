@@ -15,12 +15,19 @@
     "service_worker": "background.js"
   },
   "commands": {
-    "toggle-blocking": {
+    "enable-blocking": {
       "suggested_key": {
         "default": "Ctrl+Shift+L",
         "mac": "MacCtrl+Shift+L"
       },
-      "description": "Toggle social media blocking on/off"
+      "description": "Enable social media blocking"
+    },
+    "disable-blocking": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "MacCtrl+Shift+K"
+      },
+      "description": "Disable social media blocking"
     }
   },
   "host_permissions": [
