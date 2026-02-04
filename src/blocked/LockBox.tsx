@@ -23,7 +23,7 @@ function createToonGradientTexture(steps: number = 4): THREE.DataTexture {
   return texture
 }
 
-export function LockBox({ onLockEngage, onLockDisengage, ...props }: LockBoxProps) {
+export function LockBox({ onLockEngage, onLockDisengage, isLocked, ...props }: LockBoxProps) {
   const group = useRef<THREE.Group>(null!)
   const lockRef = useRef<THREE.Group>(null!)
   const keyRef = useRef<THREE.Group>(null!)
@@ -35,6 +35,13 @@ export function LockBox({ onLockEngage, onLockDisengage, ...props }: LockBoxProp
 
   const { nodes } = useGLTF(lockboxUrl)
 
+  useEffect(() => {
+    if(isLocked) {
+      timelineRef.current?.play()
+    } else {
+      timelineRef.current?.reverse()
+    }
+  }, [isLocked])
 
   // Create gradient map for toon shading (3 steps for classic cel-shaded look)
   const gradientMap = useMemo(() => createToonGradientTexture(4), [])

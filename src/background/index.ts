@@ -126,6 +126,49 @@ async function updateIcon(enabled: boolean) {
   await chrome.action.setIcon({ path: iconPath });
 }
 
+/** YYYY-MM-DD for today (local time) */
+function getTodayDateString(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Ensure lockTimeTodayMs and lockTimeDate are for today; reset if new day. */
+async function ensureDailyTotalForToday(): Promise<void> {
+  const today = getTodayDateString();
+  const { lockTimeDate, lockTimeTodayMs } = await chrome.storage.local.get([
+    'lockTimeDate',
+    'lockTimeTodayMs',
+  ]);
+  if (lockTimeDate !== today) {
+    await chrome.storage.local.set({
+      lockTimeTodayMs: 0,
+      lockTimeDate: today,
+    });
+  } else if (lockTimeTodayMs === undefined) {
+    await chrome.storage.local.set({ lockTimeTodayMs: 0 });
+  }
+}
+
+/** Add a session (sessionStartMs..sessionEndMs) to today's total. Only counts time within today. */
+async function addSessionToDailyTotal(sessionStartMs: number, sessionEndMs: number): Promise<void> {
+  await ensureDailyTotalForToday();
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayStartMs = todayStart.getTime();
+  const overlapStart = Math.max(sessionStartMs, todayStartMs);
+  const overlapEnd = sessionEndMs;
+  const durationMs = Math.max(0, overlapEnd - overlapStart);
+  if (durationMs === 0) return;
+  const { lockTimeTodayMs = 0 } = await chrome.storage.local.get(['lockTimeTodayMs']);
+  await chrome.storage.local.set({ lockTimeTodayMs: lockTimeTodayMs + durationMs });
+  await chrome.storage.local.remove(['lastLockInTimestamp']);
+}
+
+/** Set last lock-in timestamp (call when enabling blocking). */
+async function setLockInTimestamp(): Promise<void> {
+  await ensureDailyTotalForToday();
+  await chrome.storage.local.set({ lastLockInTimestamp: Date.now() });
+}
+
 async function enableBlocking() {
   // Check if already enabled
   const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
@@ -133,8 +176,9 @@ async function enableBlocking() {
     return; // Already enabled, do nothing
   }
 
-  // Save new state
+  // Save new state and set lock-in timestamp for daily total
   await chrome.storage.local.set({ blockingEnabled: true });
+  await setLockInTimestamp();
 
   // Update rules
   const { blockedSites = [] } = await chrome.storage.local.get(['blockedSites']);
@@ -176,9 +220,17 @@ async function enableBlocking() {
 
 async function disableBlocking() {
   // Check if already disabled
-  const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
+  const { blockingEnabled, lastLockInTimestamp } = await chrome.storage.local.get([
+    'blockingEnabled',
+    'lastLockInTimestamp',
+  ]);
   if (blockingEnabled === false) {
     return; // Already disabled, do nothing
+  }
+
+  // Add this session to today's total before clearing state
+  if (typeof lastLockInTimestamp === 'number') {
+    await addSessionToDailyTotal(lastLockInTimestamp, Date.now());
   }
 
   // Save new state
@@ -228,9 +280,14 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         const { enabled, blockedSites = [] } = message;
 
         if (enabled) {
+          await setLockInTimestamp();
           // Re-add dynamic rules
           await updateDynamicRules(blockedSites);
         } else {
+          const { lastLockInTimestamp } = await chrome.storage.local.get(['lastLockInTimestamp']);
+          if (typeof lastLockInTimestamp === 'number') {
+            await addSessionToDailyTotal(lastLockInTimestamp, Date.now());
+          }
           // Remove all dynamic rules
           const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
           const existingRuleIds = existingRules.map((rule) => rule.id);

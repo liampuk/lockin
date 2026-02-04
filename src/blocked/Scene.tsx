@@ -117,9 +117,10 @@ function AnimatedGrid({ isLocked }: { isLocked: boolean }) {
 interface SceneProps {
   isLocked: boolean;
   setIsLocked: (locked: boolean) => void;
+  initialAnimationComplete: React.RefObject<boolean>;
 }
 
-export default function Scene({ isLocked, setIsLocked }: SceneProps) {
+export default function Scene({ isLocked, setIsLocked, initialAnimationComplete }: SceneProps) {
   return (
     <div className="w-full h-full">
       <Canvas shadows style={{ background: "transparent" }}>
@@ -134,8 +135,9 @@ export default function Scene({ isLocked, setIsLocked }: SceneProps) {
         <Suspense fallback={null}>
           <LockBox
             position={[0, 0, 0]}
-            onLockEngage={() => setIsLocked(true)}
+            onLockEngage={() => {setIsLocked(true); initialAnimationComplete.current = true;}}
             onLockDisengage={() => setIsLocked(false)}
+            isLocked={isLocked}
           />
         </Suspense>
 

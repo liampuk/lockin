@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useLockTimeToday, formatLockTimeMs } from "../hooks/useLockTimeToday";
 
 interface OverlayProps {
   isLocked: boolean;
@@ -111,6 +112,16 @@ function useScrambleWord(
 
 export const Overlay = ({ isLocked }: OverlayProps) => {
   const notWord = useScrambleWord(!isLocked, "not ", 600, 0);
+  const { lockTimeTodayMs, lastLockInTimestamp } = useLockTimeToday();
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!isLocked || lastLockInTimestamp == null) return;
+    const id = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, [isLocked, lastLockInTimestamp]);
+  const currentSessionMs =
+    lastLockInTimestamp != null ? Math.max(0, Date.now() - lastLockInTimestamp) : 0;
+  const totalDisplayMs = lockTimeTodayMs + currentSessionMs;
 
   return (
     <>
@@ -140,7 +151,7 @@ export const Overlay = ({ isLocked }: OverlayProps) => {
                 color: isLocked ? "#ccc" : "#555",
               }}
             >
-              <p className="">liamp.uk</p>
+              <p className="">Time spent locked in today: {formatLockTimeMs(totalDisplayMs)}</p>
             </div>
           </div>
         </div>

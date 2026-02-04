@@ -188,6 +188,10 @@ async function updateIcon(enabled) {
 async function enableBlocking() {
   // Check if already enabled
   const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
+  const { lockTimeTodayMs } = await chrome.storage.local.get(['lockTimeTodayMs']);
+  if (lockTimeTodayMs === undefined) {
+    await chrome.storage.local.set({ lockTimeTodayMs: 0 });
+  }
   if (blockingEnabled === true) {
     return; // Already enabled, do nothing
   }
