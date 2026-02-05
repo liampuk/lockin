@@ -5,9 +5,10 @@ import {
   getDomainFromUrl,
   DEFAULT_BLOCKED_SITES,
 } from "../utils/sites";
+import { useSyncLockedIn } from "../hooks/useSyncLockedIn";
 
 export function Popup() {
-  const [blockingEnabled] = useChromeStorage("blockingEnabled", true);
+  const blockingEnabled = useSyncLockedIn();
   const [blockedSites, setBlockedSites] = useChromeStorage<string[]>(
     "blockedSites",
     DEFAULT_BLOCKED_SITES
@@ -77,11 +78,11 @@ export function Popup() {
 
   return (
     <>
-      <div className="text-[3rem] font-vt323 text-center mb-4">
-        <h1>LockIn</h1>
+      <div className="text-[3rem] font-vt323 text-center mb-6">
+        <h1>LockedIn</h1>
       </div>
 
-      <div className="text-md text-center mb-4 flex items-center justify-center gap-2 text-gray-500">
+      <div className="text-md text-center flex items-center justify-center gap-2 text-gray-500">
         <div
           className={`w-2 h-2 rounded-full ${
             blockingEnabled ? "bg-green-400" : "bg-gray-400"
@@ -90,20 +91,29 @@ export function Popup() {
         <span>{blockingEnabled ? "Blocking Active" : "Blocking Paused"}</span>
       </div>
 
-      <div className="sites-header">Blocked Sites</div>
-      <div className="sites-list">
+      <div className="h-4 shrink-0" aria-hidden="true" />
+
+      <div className="text-2xl text-center text-gray-900 uppercase tracking-[1px] font-vt323 mb-4">
+        Blocked Sites
+      </div>
+      <div className="sites-list-scroll bg-white/5 rounded-xl p-2.5 max-h-[200px] overflow-y-auto">
         {blockedSites.length === 0 ? (
-          <div className="empty-state">No blocked sites</div>
+          <div className="text-center text-gray-400 py-5">No blocked sites</div>
         ) : (
           blockedSites.map((domain) => {
             const displayInfo = getDisplayName(domain);
             return (
-              <div key={domain} className="site-item">
-                <span className="site-icon">{displayInfo.icon}</span>
-                <span className="site-name">{displayInfo.name}</span>
-                <span className="blocked-badge">Blocked</span>
+              <div
+                key={domain}
+                className="flex items-center py-2 px-2.5 rounded-lg transition-colors duration-200 hover:bg-white/5"
+              >
+                <span className="flex-1 text-xl font-vt323">
+                  {displayInfo.name}
+                </span>
                 <button
-                  className="remove-btn"
+                  type="button"
+                  className="bg-none border-none text-gray-700 font-vt323 cursor-pointer py-1 px-2 text-xl ml-2 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={blockingEnabled}
                   onClick={() => handleRemoveSite(domain)}
                 >
                   Remove
@@ -114,9 +124,12 @@ export function Popup() {
         )}
       </div>
 
-      <div className="add-site-section">
+      <div className="h-4 shrink-0" aria-hidden="true" />
+
+      <div className="mt-4 mb-2.5">
         <button
-          className="add-site-btn"
+          type="button"
+          className="w-full bg-none border-2 mt-4 border-black text-black font-vt323 py-2.5 text-xl hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleAddCurrentSite}
           disabled={addButtonDisabled}
         >

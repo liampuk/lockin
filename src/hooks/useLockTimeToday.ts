@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export interface LockTimeToday {
   /** Total ms blocking has been enabled today */
@@ -20,12 +20,15 @@ export function useLockTimeToday(): LockTimeToday {
   useEffect(() => {
     const read = () => {
       chrome.storage.local.get(
-        ['lockTimeTodayMs', 'lastLockInTimestamp'],
+        ["lockTimeTodayMs", "lastLockInTimestamp"],
         (result) => {
           setState({
-            lockTimeTodayMs: typeof result.lockTimeTodayMs === 'number' ? result.lockTimeTodayMs : 0,
+            lockTimeTodayMs:
+              typeof result.lockTimeTodayMs === "number"
+                ? result.lockTimeTodayMs
+                : 0,
             lastLockInTimestamp:
-              typeof result.lastLockInTimestamp === 'number'
+              typeof result.lastLockInTimestamp === "number"
                 ? result.lastLockInTimestamp
                 : undefined,
           });
@@ -38,7 +41,10 @@ export function useLockTimeToday(): LockTimeToday {
       changes: { [key: string]: chrome.storage.StorageChange },
       areaName: string
     ) => {
-      if (areaName === 'local' && (changes.lockTimeTodayMs || changes.lastLockInTimestamp)) {
+      if (
+        areaName === "local" &&
+        (changes.lockTimeTodayMs || changes.lastLockInTimestamp)
+      ) {
         read();
       }
     };
@@ -53,7 +59,7 @@ export function useLockTimeToday(): LockTimeToday {
 export function formatLockTimeMs(ms: number): string {
   if (ms < 60_000) {
     const sec = Math.round(ms / 1000);
-    return sec <= 0 ? '0m' : `${sec}s`;
+    return sec <= 0 ? "0m" : `${sec}s`;
   }
   const totalMins = Math.floor(ms / 60_000);
   const hours = Math.floor(totalMins / 60);
