@@ -1,27 +1,34 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useChromeStorage } from '../hooks/useChromeStorage';
-import { getDisplayName, getDomainFromUrl, DEFAULT_BLOCKED_SITES } from '../utils/sites';
+import { useState, useEffect, useCallback } from "react";
+import { useChromeStorage } from "../hooks/useChromeStorage";
+import {
+  getDisplayName,
+  getDomainFromUrl,
+  DEFAULT_BLOCKED_SITES,
+} from "../utils/sites";
 
 async function updateIcon(enabled: boolean) {
   const iconPath = enabled
     ? {
-        16: 'icons/locked16.png',
-        48: 'icons/locked48.png',
-        128: 'icons/locked128.png',
+        16: "icons/locked16.png",
+        48: "icons/locked48.png",
+        128: "icons/locked128.png",
       }
     : {
-        16: 'icons/unlocked16.png',
-        48: 'icons/unlocked48.png',
-        128: 'icons/unlocked128.png',
+        16: "icons/unlocked16.png",
+        48: "icons/unlocked48.png",
+        128: "icons/unlocked128.png",
       };
 
   await chrome.action.setIcon({ path: iconPath });
 }
 
 export function Popup() {
-  const [blockingEnabled, setBlockingEnabled, loadingEnabled] = useChromeStorage('blockingEnabled', true);
-  const [blockedSites, setBlockedSites, loadingSites] = useChromeStorage<string[]>('blockedSites', DEFAULT_BLOCKED_SITES);
-  const [addButtonText, setAddButtonText] = useState('Add Current Site');
+  const [blockingEnabled, setBlockingEnabled, loadingEnabled] =
+    useChromeStorage("blockingEnabled", true);
+  const [blockedSites, setBlockedSites, loadingSites] = useChromeStorage<
+    string[]
+  >("blockedSites", DEFAULT_BLOCKED_SITES);
+  const [addButtonText, setAddButtonText] = useState("Add Current Site");
   const [addButtonDisabled, setAddButtonDisabled] = useState(false);
 
   const loading = loadingEnabled || loadingSites;
@@ -40,7 +47,7 @@ export function Popup() {
 
     // Update rules via background script
     await chrome.runtime.sendMessage({
-      action: 'toggleBlocking',
+      action: "toggleBlocking",
       enabled: newEnabled,
       blockedSites: blockedSites,
     });
@@ -53,7 +60,7 @@ export function Popup() {
 
       // Update rules in background
       await chrome.runtime.sendMessage({
-        action: 'updateRules',
+        action: "updateRules",
         blockedSites: updatedSites,
       });
     },
@@ -62,15 +69,18 @@ export function Popup() {
 
   const handleAddCurrentSite = useCallback(async () => {
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
       if (!tab || !tab.url) {
-        alert('Unable to get current tab URL');
+        alert("Unable to get current tab URL");
         return;
       }
 
       const domain = getDomainFromUrl(tab.url);
       if (!domain) {
-        alert('Invalid URL');
+        alert("Invalid URL");
         return;
       }
 
@@ -86,20 +96,20 @@ export function Popup() {
 
       // Update rules in background
       await chrome.runtime.sendMessage({
-        action: 'updateRules',
+        action: "updateRules",
         blockedSites: updatedSites,
       });
 
       // Show feedback
-      setAddButtonText('Added!');
+      setAddButtonText("Added!");
       setAddButtonDisabled(true);
       setTimeout(() => {
-        setAddButtonText('Add Current Site');
+        setAddButtonText("Add Current Site");
         setAddButtonDisabled(false);
       }, 1500);
     } catch (error) {
-      console.error('Error adding current site:', error);
-      alert('Error adding site: ' + (error as Error).message);
+      console.error("Error adding current site:", error);
+      alert("Error adding site: " + (error as Error).message);
     }
   }, [blockedSites, setBlockedSites]);
 
@@ -115,14 +125,13 @@ export function Popup() {
   return (
     <>
       <div className="header">
-        <h1>🔒 LockIn</h1>
-        <p>Stay focused, stay productive</p>
+        <h1>LockIn</h1>
       </div>
 
       <div className="status">
         <div className="status-text">
-          <div className={`status-dot ${!blockingEnabled ? 'inactive' : ''}`} />
-          <span>{blockingEnabled ? 'Blocking Active' : 'Blocking Paused'}</span>
+          <div className={`status-dot ${!blockingEnabled ? "inactive" : ""}`} />
+          <span>{blockingEnabled ? "Blocking Active" : "Blocking Paused"}</span>
         </div>
         <label className="toggle">
           <input
