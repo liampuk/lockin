@@ -6,6 +6,17 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "VT323";
+  src: url("/VT323-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@theme {
+  --font-vt323: "VT323", sans-serif;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   width: 320px;
@@ -14,22 +25,9 @@ body {
   padding: 20px;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.header h1 {
-  font-size: 1.5rem;
-  color: black;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .header p {
   font-size: 0.85rem;
-  color: #a0a0a0;
+  color: black;
   margin-top: 5px;
 }
 
@@ -54,7 +52,6 @@ body {
   height: 10px;
   background: #4ade80;
   border-radius: 50%;
-  animation: blink 2s ease-in-out infinite;
 }
 
 .status-dot.inactive {
@@ -91,7 +88,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #374151;
+  background-color: #393939;
   transition: 0.3s;
   border-radius: 26px;
 }
@@ -159,7 +156,7 @@ input:checked + .slider:before {
 .blocked-badge {
   font-size: 0.7rem;
   background: rgba(233, 69, 96, 0.2);
-  color: #e94560;
+  color: #d4d4d4;
   padding: 3px 8px;
   border-radius: 10px;
 }
@@ -167,7 +164,7 @@ input:checked + .slider:before {
 .remove-btn {
   background: rgba(233, 69, 96, 0.2);
   border: none;
-  color: #e94560;
+  color: #d9d9d9;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 6px;
@@ -177,7 +174,7 @@ input:checked + .slider:before {
 }
 
 .remove-btn:hover {
-  background: rgba(233, 69, 96, 0.4);
+  background: rgba(225, 225, 225, 0.4);
 }
 
 .add-site-section {
@@ -187,7 +184,7 @@ input:checked + .slider:before {
 
 .add-site-btn {
   width: 100%;
-  background: linear-gradient(90deg, #e94560, #ff6b6b);
+  background: #ddd;
   border: none;
   color: white;
   padding: 10px;
@@ -224,6 +221,6 @@ input:checked + .slider:before {
 }
 
 .sites-list::-webkit-scrollbar-thumb {
-  background: #e94560;
+  background: #d2d2d2;
   border-radius: 3px;
 }

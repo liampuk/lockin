@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useChromeStorage } from "../hooks/useChromeStorage";
 import {
   getDisplayName,
@@ -6,52 +6,14 @@ import {
   DEFAULT_BLOCKED_SITES,
 } from "../utils/sites";
 
-async function updateIcon(enabled: boolean) {
-  const iconPath = enabled
-    ? {
-        16: "icons/locked16.png",
-        48: "icons/locked48.png",
-        128: "icons/locked128.png",
-      }
-    : {
-        16: "icons/unlocked16.png",
-        48: "icons/unlocked48.png",
-        128: "icons/unlocked128.png",
-      };
-
-  await chrome.action.setIcon({ path: iconPath });
-}
-
 export function Popup() {
-  const [blockingEnabled, setBlockingEnabled, loadingEnabled] =
-    useChromeStorage("blockingEnabled", true);
-  const [blockedSites, setBlockedSites, loadingSites] = useChromeStorage<
-    string[]
-  >("blockedSites", DEFAULT_BLOCKED_SITES);
+  const [blockingEnabled] = useChromeStorage("blockingEnabled", true);
+  const [blockedSites, setBlockedSites] = useChromeStorage<string[]>(
+    "blockedSites",
+    DEFAULT_BLOCKED_SITES
+  );
   const [addButtonText, setAddButtonText] = useState("Add Current Site");
   const [addButtonDisabled, setAddButtonDisabled] = useState(false);
-
-  const loading = loadingEnabled || loadingSites;
-
-  // Update icon when blocking state changes
-  useEffect(() => {
-    if (!loading) {
-      updateIcon(blockingEnabled);
-    }
-  }, [blockingEnabled, loading]);
-
-  const handleToggle = useCallback(async () => {
-    const newEnabled = !blockingEnabled;
-    await setBlockingEnabled(newEnabled);
-    await updateIcon(newEnabled);
-
-    // Update rules via background script
-    await chrome.runtime.sendMessage({
-      action: "toggleBlocking",
-      enabled: newEnabled,
-      blockedSites: blockedSites,
-    });
-  }, [blockingEnabled, blockedSites, setBlockingEnabled]);
 
   const handleRemoveSite = useCallback(
     async (domain: string) => {
@@ -113,34 +75,19 @@ export function Popup() {
     }
   }, [blockedSites, setBlockedSites]);
 
-  if (loading) {
-    return (
-      <div className="header">
-        <h1>🔒 LockIn</h1>
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className="header">
+      <div className="text-[3rem] font-vt323 text-center mb-4">
         <h1>LockIn</h1>
       </div>
 
-      <div className="status">
-        <div className="status-text">
-          <div className={`status-dot ${!blockingEnabled ? "inactive" : ""}`} />
-          <span>{blockingEnabled ? "Blocking Active" : "Blocking Paused"}</span>
-        </div>
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={blockingEnabled}
-            onChange={handleToggle}
-          />
-          <span className="slider" />
-        </label>
+      <div className="text-md text-center mb-4 flex items-center justify-center gap-2 text-gray-500">
+        <div
+          className={`w-2 h-2 rounded-full ${
+            blockingEnabled ? "bg-green-400" : "bg-gray-400"
+          }`}
+        />
+        <span>{blockingEnabled ? "Blocking Active" : "Blocking Paused"}</span>
       </div>
 
       <div className="sites-header">Blocked Sites</div>
