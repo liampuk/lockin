@@ -34,9 +34,9 @@ export function getDisplayName(domain: string): SiteDisplayInfo {
   }
 
   // Default: use domain name with first letter capitalized
-  const name = domain.split(".")[0];
+  const name = domain;
   return {
-    name: name.charAt(0).toUpperCase() + name.slice(1),
+    name: name,
   };
 }
 
