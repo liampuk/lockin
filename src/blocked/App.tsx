@@ -1,8 +1,28 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
 import './App.css';
 import { Overlay } from './Overlay';
-import Scene from './Scene';
 import { useSyncLockedIn } from '../hooks/useSyncLockedIn';
+
+const Scene = lazy(() => import('./Scene'));
+
+/** Fades in only after the Canvas has had a chance to paint (avoids pop). */
+function FadeInScene({ children }: { children: React.ReactNode }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+  return (
+    <div
+      className="w-full h-full transition-opacity duration-500 ease-out"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
+      {children}
+    </div>
+  );
+}
 
 function App() {
   const [isLocked, setIsLocked] = useState(false);
@@ -50,13 +70,17 @@ function App() {
       className="w-full min-h-screen transition-colors duration-1000"
       style={{ backgroundColor: isLocked ? '#333' : '#eee' }}
     >
-      {/* Hero section with 3D scene */}
+      {/* Hero section with 3D scene (lazy-loaded to keep initial bundle small) */}
       <div className="relative w-full h-screen">
-        <Scene
-          isLocked={isLocked}
-          setIsLocked={setIsLocked}
-          initialAnimationComplete={initialAnimationComplete}
-        />
+        <Suspense fallback={<div className="w-full h-full min-h-[400px]" />}>
+          <FadeInScene>
+            <Scene
+              isLocked={isLocked}
+              setIsLocked={setIsLocked}
+              initialAnimationComplete={initialAnimationComplete}
+            />
+          </FadeInScene>
+        </Suspense>
         <Overlay isLocked={isLocked} />
       </div>
     </div>
