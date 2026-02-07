@@ -59,10 +59,10 @@ function App() {
         <Overlay isLocked={isLocked} />
       </div>
       <div
-        className="w-full h-screen px-4 sm:px-6 md:px-8 py-16 sm:py-24 transition-colors duration-1000"
+        className="w-full h-screen px-4 sm:px-6 md:px-8 py-16 sm:py-24 transition-colors duration-1000 border-t border-gray-600 flex items-center justify-center"
         style={{ color: isLocked ? "#ccc" : "#333" }}
       >
-        {/* Add your content here */}
+        <p className="text-2xl font-vt323">Site coming soon</p>
       </div>
     </div>
   );
