@@ -5,7 +5,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -19,7 +19,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -33,7 +33,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -47,7 +47,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -61,7 +61,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -75,7 +75,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -89,7 +89,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -103,7 +103,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -117,7 +117,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -131,7 +131,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -145,7 +145,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
@@ -159,7 +159,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "extensionPath": "/blocked.html"
+        "extensionPath": "/src/blocked/index.html"
       }
     },
     "condition": {
