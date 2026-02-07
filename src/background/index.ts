@@ -1,4 +1,59 @@
-import { DEFAULT_BLOCKED_SITES } from '../utils/sites';
+import { DEFAULT_BLOCKED_SITES, getDomainFromUrl } from '../utils/sites';
+
+// Helper function to check if a URL matches any blocked site
+function isUrlBlocked(url: string, blockedSites: string[]): boolean {
+  const domain = getDomainFromUrl(url);
+  if (!domain) return false;
+
+  // Check if domain matches any blocked site (exact match or subdomain)
+  return blockedSites.some((blockedDomain) => {
+    if (domain === blockedDomain) return true;
+    // Check if domain is a subdomain of blocked domain (e.g., www.facebook.com matches facebook.com)
+    return domain.endsWith(`.${blockedDomain}`);
+  });
+}
+
+// Check and block the currently active tab if it's on a blocked site
+async function checkAndBlockActiveTab() {
+  try {
+    const { blockingEnabled, blockedSites = [] } =
+      await chrome.storage.local.get(['blockingEnabled', 'blockedSites']);
+
+    // Only check if blocking is enabled
+    if (blockingEnabled !== true || blockedSites.length === 0) {
+      return;
+    }
+
+    // Get the currently active tab
+    const [activeTab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+
+    if (!activeTab || !activeTab.url) {
+      return;
+    }
+
+    // Skip chrome://, chrome-extension://, and other internal URLs
+    if (
+      activeTab.url.startsWith('chrome://') ||
+      activeTab.url.startsWith('chrome-extension://') ||
+      activeTab.url.startsWith('edge://') ||
+      activeTab.url.startsWith('about:')
+    ) {
+      return;
+    }
+
+    // Check if the active tab is on a blocked site
+    if (isUrlBlocked(activeTab.url, blockedSites)) {
+      // Redirect to blocked page
+      const blockedPageUrl = chrome.runtime.getURL('/src/blocked/index.html');
+      await chrome.tabs.update(activeTab.id!, { url: blockedPageUrl });
+    }
+  } catch (error) {
+    console.error('Error checking active tab:', error);
+  }
+}
 
 // Helper function to create a rule for a domain
 // Using rule IDs starting from 1000 to avoid conflicts with static rules
@@ -149,7 +204,10 @@ async function ensureDailyTotalForToday(): Promise<void> {
 }
 
 /** Add a session (sessionStartMs..sessionEndMs) to today's total. Only counts time within today. */
-async function addSessionToDailyTotal(sessionStartMs: number, sessionEndMs: number): Promise<void> {
+async function addSessionToDailyTotal(
+  sessionStartMs: number,
+  sessionEndMs: number
+): Promise<void> {
   await ensureDailyTotalForToday();
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -158,8 +216,12 @@ async function addSessionToDailyTotal(sessionStartMs: number, sessionEndMs: numb
   const overlapEnd = sessionEndMs;
   const durationMs = Math.max(0, overlapEnd - overlapStart);
   if (durationMs === 0) return;
-  const { lockTimeTodayMs = 0 } = await chrome.storage.local.get(['lockTimeTodayMs']);
-  await chrome.storage.local.set({ lockTimeTodayMs: lockTimeTodayMs + durationMs });
+  const { lockTimeTodayMs = 0 } = await chrome.storage.local.get([
+    'lockTimeTodayMs',
+  ]);
+  await chrome.storage.local.set({
+    lockTimeTodayMs: lockTimeTodayMs + durationMs,
+  });
   await chrome.storage.local.remove(['lastLockInTimestamp']);
 }
 
@@ -171,7 +233,9 @@ async function setLockInTimestamp(): Promise<void> {
 
 async function enableBlocking() {
   // Check if already enabled
-  const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
+  const { blockingEnabled } = await chrome.storage.local.get([
+    'blockingEnabled',
+  ]);
   if (blockingEnabled === true) {
     return; // Already enabled, do nothing
   }
@@ -181,7 +245,9 @@ async function enableBlocking() {
   await setLockInTimestamp();
 
   // Update rules
-  const { blockedSites = [] } = await chrome.storage.local.get(['blockedSites']);
+  const { blockedSites = [] } = await chrome.storage.local.get([
+    'blockedSites',
+  ]);
 
   // Re-add dynamic rules
   await updateDynamicRules(blockedSites);
@@ -216,14 +282,15 @@ async function enableBlocking() {
   setTimeout(async () => {
     await chrome.action.setBadgeText({ text: '' });
   }, 2000);
+
+  // Check and block the currently active tab if it's on a blocked site
+  await checkAndBlockActiveTab();
 }
 
 async function disableBlocking() {
   // Check if already disabled
-  const { blockingEnabled, lastLockInTimestamp } = await chrome.storage.local.get([
-    'blockingEnabled',
-    'lastLockInTimestamp',
-  ]);
+  const { blockingEnabled, lastLockInTimestamp } =
+    await chrome.storage.local.get(['blockingEnabled', 'lastLockInTimestamp']);
   if (blockingEnabled === false) {
     return; // Already disabled, do nothing
   }
@@ -263,7 +330,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   (async () => {
     if (message.action === 'updateRules') {
       try {
-        const { blockingEnabled } = await chrome.storage.local.get(['blockingEnabled']);
+        const { blockingEnabled } = await chrome.storage.local.get([
+          'blockingEnabled',
+        ]);
 
         // Only update rules if blocking is enabled
         if (blockingEnabled !== false) {
@@ -284,12 +353,15 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           // Re-add dynamic rules
           await updateDynamicRules(blockedSites);
         } else {
-          const { lastLockInTimestamp } = await chrome.storage.local.get(['lastLockInTimestamp']);
+          const { lastLockInTimestamp } = await chrome.storage.local.get([
+            'lastLockInTimestamp',
+          ]);
           if (typeof lastLockInTimestamp === 'number') {
             await addSessionToDailyTotal(lastLockInTimestamp, Date.now());
           }
           // Remove all dynamic rules
-          const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
+          const existingRules =
+            await chrome.declarativeNetRequest.getDynamicRules();
           const existingRuleIds = existingRules.map((rule) => rule.id);
           if (existingRuleIds.length > 0) {
             await chrome.declarativeNetRequest.updateDynamicRules({
@@ -317,13 +389,25 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 });
 
+// Listen for tab activation - check if newly active tab is blocked
+chrome.tabs.onActivated.addListener(async () => {
+  await checkAndBlockActiveTab();
+});
+
+// Listen for tab updates - check if updated tab is now active and blocked
+chrome.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
+  // Only check when the URL changes and the tab is active
+  if (changeInfo.url && tab.active) {
+    await checkAndBlockActiveTab();
+  }
+});
+
 // Initialize badge state on startup
 chrome.runtime.onStartup.addListener(async () => {
   await initializeBlockedSites();
-  const { blockingEnabled, blockedSites = [] } = await chrome.storage.local.get([
-    'blockingEnabled',
-    'blockedSites',
-  ]);
+  const { blockingEnabled, blockedSites = [] } = await chrome.storage.local.get(
+    ['blockingEnabled', 'blockedSites']
+  );
   await updateIcon(blockingEnabled);
   if (blockingEnabled === false) {
     // Remove dynamic rules if blocking is disabled
@@ -352,10 +436,9 @@ chrome.runtime.onStartup.addListener(async () => {
 // Also run on install
 chrome.runtime.onInstalled.addListener(async () => {
   await initializeBlockedSites();
-  const { blockingEnabled, blockedSites = [] } = await chrome.storage.local.get([
-    'blockingEnabled',
-    'blockedSites',
-  ]);
+  const { blockingEnabled, blockedSites = [] } = await chrome.storage.local.get(
+    ['blockingEnabled', 'blockedSites']
+  );
   await updateIcon(blockingEnabled);
 
   if (blockingEnabled === false) {

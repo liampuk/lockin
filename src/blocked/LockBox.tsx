@@ -1,9 +1,9 @@
-import { useRef, useMemo, useEffect, useCallback } from "react";
-import { useFrame } from "@react-three/fiber";
-import { useGLTF, Outlines } from "@react-three/drei";
-import * as THREE from "three";
-import gsap from "gsap";
-import lockboxUrl from "/lockbox.glb?url";
+import { useRef, useMemo, useEffect, useCallback } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { useGLTF, Outlines } from '@react-three/drei';
+import * as THREE from 'three';
+import gsap from 'gsap';
+import lockboxUrl from '/lockbox.glb?url';
 
 interface LockBoxProps {
   onLockEngage?: () => void;
@@ -54,7 +54,7 @@ export function LockBox({
   const shinyMaterial = useMemo(
     () =>
       new THREE.MeshToonMaterial({
-        color: "#ddd",
+        color: '#ddd',
         gradientMap: gradientMap,
         side: THREE.DoubleSide,
       }),
@@ -64,7 +64,7 @@ export function LockBox({
   const roughMaterial = useMemo(
     () =>
       new THREE.MeshToonMaterial({
-        color: "#bbb",
+        color: '#bbb',
         gradientMap: gradientMap,
         side: THREE.DoubleSide,
       }),
@@ -74,7 +74,7 @@ export function LockBox({
   const blackMaterial = useMemo(
     () =>
       new THREE.MeshToonMaterial({
-        color: "#777",
+        color: '#777',
         gradientMap: gradientMap,
         side: THREE.DoubleSide,
       }),
@@ -85,7 +85,7 @@ export function LockBox({
     () =>
       new THREE.MeshBasicMaterial({
         // MeshBasicMaterial ignores scene lighting - appears as pure color
-        color: "#331111", // starts dim red
+        color: '#331111', // starts dim red
         side: THREE.DoubleSide,
       }),
     []
@@ -114,14 +114,14 @@ export function LockBox({
     tl.to(animState.current, {
       keyY: -0.2,
       duration: 0.4,
-      ease: "power3.inOut",
+      ease: 'power3.inOut',
     });
 
     // 2️⃣ Rotation (around Y axis) - 90 degrees
     tl.to(animState.current, {
       rotation: Math.PI / 2,
       duration: 0.6,
-      ease: "power2.inOut",
+      ease: 'power2.inOut',
     });
 
     // 3️⃣ LED turns on (starts halfway through rotation)
@@ -130,9 +130,9 @@ export function LockBox({
       {
         ledIntensity: 1,
         duration: 0.4,
-        ease: "power2.out",
+        ease: 'power2.out',
       },
-      "-=0.3"
+      '-=0.3'
     );
 
     // Fire callbacks at 0.7s mark (halfway through key rotation)
@@ -206,7 +206,10 @@ export function LockBox({
       }, 350);
     } else {
       // Currently unlocked - play to lock
-      // tl.play()
+      tl.play();
+      setTimeout(() => {
+        tl.reverse();
+      }, 150);
     }
   }, []);
 
@@ -232,8 +235,8 @@ export function LockBox({
       {...props}
       dispose={null}
       onClick={handleClick}
-      onPointerOver={() => (document.body.style.cursor = "pointer")}
-      onPointerOut={() => (document.body.style.cursor = "auto")}
+      onPointerOver={() => (document.body.style.cursor = 'pointer')}
+      onPointerOut={() => (document.body.style.cursor = 'auto')}
     >
       {/* Box parts - grey */}
       {/* Visible mesh - receives shadows from other components */}
