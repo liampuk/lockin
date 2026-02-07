@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "LockIn - Social Media Blocker",
+  "name": "LockIn",
   "version": "1.0.0",
   "description": "Block social media sites to stay focused and productive",
   "permissions": [
@@ -34,9 +34,7 @@
       "description": "Disable social media blocking"
     }
   },
-  "host_permissions": [
-    "*://*/*"
-  ],
+  "host_permissions": ["*://*/*"],
   "declarative_net_request": {
     "rule_resources": [
       {
@@ -69,9 +67,7 @@
       "matches": ["<all_urls>"]
     },
     {
-      "resources": [
-        "src/blocked/index.html"
-      ],
+      "resources": ["src/blocked/index.html"],
       "matches": ["<all_urls>"]
     }
   ]

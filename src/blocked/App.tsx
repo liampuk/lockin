@@ -1,9 +1,16 @@
-import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
-import './App.css';
-import { Overlay } from './Overlay';
-import { useSyncLockedIn } from '../hooks/useSyncLockedIn';
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  lazy,
+  Suspense,
+} from "react";
+import "./App.css";
+import { Overlay } from "./Overlay";
+import { useSyncLockedIn } from "../hooks/useSyncLockedIn";
 
-const Scene = lazy(() => import('./Scene'));
+const Scene = lazy(() => import("./Scene"));
 
 /** Fades in only after the Canvas has had a chance to paint (avoids pop). */
 function FadeInScene({ children }: { children: React.ReactNode }) {
@@ -34,7 +41,7 @@ function App() {
   // Update body background for correct overscroll color on macOS/iOS
   // Use useLayoutEffect to set synchronously before paint to prevent flash
   useLayoutEffect(() => {
-    const bgColor = isLocked ? '#333' : '#eee';
+    const bgColor = isLocked ? "#333" : "#eee";
 
     // Initialize transition only once, after first render
     if (!transitionInitializedRef.current) {
@@ -44,8 +51,8 @@ function App() {
 
       // Set transition on next frame to allow initial paint without transition
       const rafId = requestAnimationFrame(() => {
-        document.documentElement.style.transition = 'background-color 1000ms';
-        document.body.style.transition = 'background-color 1000ms';
+        document.documentElement.style.transition = "background-color 1000ms";
+        document.body.style.transition = "background-color 1000ms";
         transitionInitializedRef.current = true;
       });
 
@@ -59,7 +66,7 @@ function App() {
   }, [isLocked]);
 
   useEffect(() => {
-    console.log('@@ currentlyLockedIn', currentlyLockedIn);
+    console.log("@@ currentlyLockedIn", currentlyLockedIn);
     if (currentlyLockedIn !== isLocked && initialAnimationComplete.current) {
       setIsLocked(currentlyLockedIn);
     }
@@ -68,7 +75,7 @@ function App() {
   return (
     <div
       className="w-full min-h-screen transition-colors duration-1000"
-      style={{ backgroundColor: isLocked ? '#333' : '#eee' }}
+      style={{ backgroundColor: isLocked ? "#333" : "#eee" }}
     >
       {/* Hero section with 3D scene (lazy-loaded to keep initial bundle small) */}
       <div className="relative w-full h-screen">
