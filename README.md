@@ -5,6 +5,7 @@ A simple Chrome extension that blocks social media sites to help you stay focuse
 ## Features
 
 - Blocks popular social media sites including:
+
   - Facebook
   - Twitter / X
   - Instagram
@@ -23,20 +24,26 @@ A simple Chrome extension that blocks social media sites to help you stay focuse
 
 ## Installation
 
-### 1. Generate Icons (Required)
+### 1. Build the extension
 
-Before loading the extension, you need to generate the icon files:
+From the repo root:
 
-1. Open `icons/generate-icons.html` in Chrome
-2. Right-click each canvas and select "Save image as..."
-3. Save them as `icon16.png`, `icon48.png`, and `icon128.png` in the `icons/` folder
+```bash
+npm run build
+```
+
+Or build only the extension:
+
+```bash
+npm run build --workspace=extension
+```
 
 ### 2. Load the Extension in Chrome
 
 1. Open Chrome and navigate to `chrome://extensions/`
 2. Enable **Developer mode** (toggle in the top right corner)
 3. Click **Load unpacked**
-4. Select the `lockin` folder (this folder)
+4. Select the `apps/extension/dist` folder (after building)
 5. The extension should now appear in your extensions list
 
 ### 3. Pin the Extension (Optional)
@@ -54,25 +61,22 @@ Before loading the extension, you need to generate the icon files:
 
 ### Adding More Sites
 
-1. Edit `rules.json` to add new blocking rules
-2. Add corresponding host permissions in `manifest.json`
+1. Edit `apps/extension/rules.json` to add new blocking rules
+2. Add corresponding host permissions in `apps/extension/manifest.json`
 3. Reload the extension in `chrome://extensions/`
 
 ### Removing Sites
 
-1. Remove the rule from `rules.json`
-2. Remove the host permission from `manifest.json`
-3. Optionally update `popup.html` to remove from the UI list
+1. Remove the rule from `apps/extension/rules.json`
+2. Remove the host permission from `apps/extension/manifest.json`
+3. Optionally update the popup UI in `apps/extension/src/popup/`
 4. Reload the extension
 
-## Files
+## Project structure (Turborepo)
 
-- `manifest.json` - Extension configuration
-- `rules.json` - Blocking rules for declarativeNetRequest API
-- `popup.html` - Extension popup UI
-- `popup.js` - Popup functionality
-- `blocked.html` - Page shown when a site is blocked
-- `icons/` - Extension icons
+- `apps/extension/` – Chrome extension (Vite + React). `manifest.json`, `rules.json`, `icons/` live here.
+- `apps/website/` – Standalone website (same blocked-page experience)
+- `packages/scene/` – Shared 3D scene (used by extension and website)
 
 ## Technical Details
 
