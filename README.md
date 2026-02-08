@@ -2,6 +2,8 @@
 
 A simple Chrome extension that blocks social media sites to help you stay focused and productive.
 
+<img width="1920" height="887" alt="image" src="https://github.com/user-attachments/assets/b817ba37-4a21-430c-be9f-f95cffa28d8e" />
+
 ## Features
 
 - Blocks popular social media sites including:
