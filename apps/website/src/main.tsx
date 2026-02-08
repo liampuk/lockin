@@ -1,9 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-// Set base URL for CSS (e.g. font) when deployed to a subpath
+// Inject font with correct base URL before CSS loads (so subpath deployment works)
 const base = import.meta.env.BASE_URL;
-document.documentElement.style.setProperty('--base-url', base);
-document.documentElement.style.setProperty('--font-url', `${base}VT323-Regular.ttf`);
+const fontUrl = `${base}VT323-Regular.ttf`;
+const fontStyle = document.createElement('style');
+fontStyle.textContent = `@font-face{font-family:"VT323";src:url("${fontUrl}") format("truetype");font-weight:400;font-style:normal;}`;
+document.documentElement.prepend(fontStyle);
 import './index.css';
 import App from './App';
 

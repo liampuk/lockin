@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: "VT323";
-  src: url(var(--font-url)) format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
+/* VT323 font is injected from main.tsx with correct base URL for subpath deployment */
 
 @theme {
   --font-vt323: "VT323", sans-serif;
