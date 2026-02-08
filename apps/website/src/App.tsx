@@ -4,6 +4,8 @@ import { FlyInCard } from "./FlyInCard";
 import { MediaCard } from "./MediaCard";
 import { FadeInScene } from "./FadeInScene";
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 const SceneLazy = lazy(() =>
   import("@lockedin/scene").then((m) => ({ default: m.Scene }))
 );
@@ -43,7 +45,7 @@ function App() {
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
           <FlyInCard flyFrom="left" delay={0}>
             <MediaCard
-              src="/output1.jpg"
+              src={`${BASE_URL}output1.jpg`}
               alt="Output 1"
               type="image"
               baseRotation={3}
@@ -51,7 +53,7 @@ function App() {
           </FlyInCard>
           <FlyInCard flyFrom="right" delay={100}>
             <MediaCard
-              src="/output2.jpg"
+              src={`${BASE_URL}output2.jpg`}
               alt="Output 2"
               type="image"
               baseRotation={-3}
@@ -64,7 +66,7 @@ function App() {
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
           <FlyInCard flyFrom="left" delay={200}>
             <MediaCard
-              src="/output3.jpg"
+              src={`${BASE_URL}output3.jpg`}
               alt="Output 3"
               type="image"
               baseRotation={4}
@@ -72,7 +74,7 @@ function App() {
           </FlyInCard>
           <FlyInCard flyFrom="right" delay={300}>
             <MediaCard
-              src="/output.mp4"
+              src={`${BASE_URL}output.mp4`}
               alt="Output video"
               type="video"
               baseRotation={-1}
